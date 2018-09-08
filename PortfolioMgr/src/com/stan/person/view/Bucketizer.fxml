@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="971.0" prefWidth="1215.0" stylesheets="@darker.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.stan.person.Controller">
+    <children>
+        <MenuBar minHeight="-Infinity" prefHeight="30.0" prefWidth="1215.0" VBox.vgrow="ALWAYS">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openPortfolioPlan" text="Open New Portfolio Plan" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Undo" />
+                        <MenuItem mnemonicParsing="false" text="Redo" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Cut" />
+                        <MenuItem mnemonicParsing="false" text="Copy" />
+                        <MenuItem mnemonicParsing="false" text="Paste" />
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Select All" />
+                        <MenuItem mnemonicParsing="false" text="Unselect All" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About Bucketizer" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane maxHeight="-1.0" maxWidth="-Infinity" prefHeight="941.0" prefWidth="1197.0" VBox.vgrow="ALWAYS">
+            <children>
+                <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="658.0" prefWidth="1129.0" AnchorPane.bottomAnchor="279.0" AnchorPane.topAnchor="4.0">
+                    <children>
+                        <HBox minWidth="-Infinity" prefHeight="27.0">
+                            <children>
+                                <Label maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-background-radius: 2; -fx-pref-width: 140;" text="Portfolio Activity File:" textFill="#f8f7f7">
+                                    <padding>
+                                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                    </padding>
+                                </Label>
+                                <TextField fx:id="activityFilePath" minWidth="-Infinity" prefHeight="26.0" prefWidth="473.0" promptText="Portfolio Activity File" style="-fx-border-color: gray;">
+                                    <HBox.margin>
+                                        <Insets left="12.0" />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                    </padding>
+                           <font>
+                              <Font name="Menlo Regular" size="11.0" />
+                           </font>
+                                </TextField>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="openActivityFile" minWidth="-Infinity" mnemonicParsing="false" onAction="#openActivityFileClicked" prefHeight="26.0" prefWidth="57.0" text="Open" />
+                            </children>
+                            <padding>
+                                <Insets left="4.0" />
+                            </padding>
+                        </HBox>
+                        <HBox maxWidth="-Infinity" prefHeight="24.0" prefWidth="1215.0">
+                            <children>
+                                <Label style="-fx-background-color: gray; -fx-background-radius: 2; -fx-pref-width: 140;" text="Outstanding Cash:    " textFill="WHITE">
+                                    <padding>
+                                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                    </padding>
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </Label>
+                                <TextField fx:id="pendingCash" onAction="#refresh" prefHeight="27.0" prefWidth="74.0" text="0.00">
+                                    <HBox.margin>
+                                        <Insets left="12.0" />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                    </padding>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                                </TextField>
+                            </children>
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <padding>
+                                <Insets left="4.0" />
+                            </padding>
+                        </HBox>
+                        <TableView fx:id="portfolioTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="549.0" prefWidth="1210.0">
+                            <columns>
+                                <TableColumn fx:id="ticker" prefWidth="75.0" text="Ticker" />
+                                <TableColumn fx:id="description" maxWidth="500.0" minWidth="75.0" prefWidth="300.0" text="Description" />
+                                <TableColumn fx:id="currentPrice" prefWidth="75.0" text="Price/Share" />
+                        <TableColumn fx:id="todayChange" prefWidth="75.0" text="Today" />
+                        <TableColumn fx:id="above50Day" prefWidth="75.0" text="50Day" />
+                        <TableColumn fx:id="above200Day" prefWidth="75.0" text="200Day" />
+                        <TableColumn fx:id="gainWithPct" prefWidth="125.0" text="Gain (%)" />
+                                <TableColumn fx:id="currentValue" prefWidth="75.0" text="Value" />
+                                <TableColumn fx:id="numberOfShares" prefWidth="75.0" text="Shares" />
+                                <TableColumn fx:id="costBasis" prefWidth="75.0" text="Cost" />
+                        <TableColumn fx:id="actualPct" prefWidth="75.0" text="Act%" />
+                                <TableColumn fx:id="targetPct" prefWidth="75.0" text="Tgt%" />
+                                <TableColumn fx:id="type" prefWidth="58.0" text="Type" />
+                            </columns>
+                            <padding>
+                                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                            </padding>
+                     <VBox.margin>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </VBox.margin>
+                        </TableView>
+                  <HBox maxWidth="-Infinity" prefHeight="33.0" prefWidth="1215.0">
+                     <children>
+                        <Label maxWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Total  Value" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="portfolioValue" minWidth="-Infinity" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 150;" stylesheets="@darker.css">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="10.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Cost Basis" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="totalCostBasis" layoutX="160.0" layoutY="10.0" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 160;">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="270.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Gain" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="totalGain" layoutX="420.0" layoutY="10.0" minWidth="-Infinity" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 160;">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </padding>
+                  </HBox>
+                  <HBox layoutX="14.0" layoutY="462.0">
+                     <children>
+                        <Label maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Total Cash" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="totalCashValue" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 150;">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="10.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Total Fixed" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="totalFixedValue" layoutX="160.0" layoutY="10.0" prefHeight="27.0" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 160;">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="270.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Total Equity" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="totalEquityValue" layoutX="420.0" layoutY="10.0" prefHeight="27.0" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 160;">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </padding>
+                  </HBox>
+                  <HBox layoutX="14.0" layoutY="600.0">
+                     <children>
+                        <Label maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Bucket1" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="bucket1" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 150;">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="10.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Bucket2" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="bucket2" layoutX="160.0" layoutY="10.0" prefHeight="27.0" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 160;">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="270.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Bucket3" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="bucket3" layoutX="420.0" layoutY="10.0" prefHeight="27.0" prefWidth="200.0" style="-fx-border-color: gray; -fx-pref-width: 160;">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Menlo Regular" size="12.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </padding>
+                  </HBox>
+                  <HBox minHeight="-Infinity" prefHeight="157.0" prefWidth="1215.0">
+                     <children>
+                        <Label maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-border-radius: 2; -fx-pref-width: 90;" text="Real-time Quote" textFill="#f8f4f4">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                        </Label>
+                        <TextArea fx:id="quoteArea" prefHeight="135.0" prefWidth="800.0">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Menlo Regular" size="13.0" />
+                           </font>
+                        </TextArea>
+                        <Button mnemonicParsing="false" onAction="#refresh" text="Refresh">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </padding>
+                  </HBox>
+                    </children>
+                    <padding>
+                        <Insets left="4.0" />
+                    </padding>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

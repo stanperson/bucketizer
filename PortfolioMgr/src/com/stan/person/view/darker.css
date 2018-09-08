@@ -1,0 +1,36 @@
+.root{
+    -fx-font-size: 10pt;
+     -fx-font-family: "Menlo";
+     -fx-base: rgb(182,185,171);
+     -fx-background: rgb(56, 56, 56);
+}
+
+.table-view{
+   -fx-background-color: transparent;
+  
+}
+
+.table-cell{
+	-fx-font-size: 9pt;
+}
+
+#text-area{
+   -fx-background-color: rgb(56, 56, 56);
+}
+
+.textfield {
+    -fx-background-color: #383838;
+    -fx-font-family: "Menlo";
+    -fx-font-size: 9pt;
+}
+.button{
+    -fx-background-color: burlywood;
+    -fx-text-fill: antiquewhite;
+    -fx-background-radius: 4;
+    -fx-font-family: "Arial Narrow";
+}
+
+.label{
+    -fx-font-family: "Arial Narrow";
+    -fx-font-size: 9pt;
+}
