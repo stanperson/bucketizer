@@ -15,7 +15,7 @@ public class Main extends Application {
 	        window = primaryStage;
 	        Parent root = FXMLLoader.load(getClass().getResource("view/Bucketizer.fxml"));
 	        primaryStage.setTitle("Bucketizer");
-	        primaryStage.setScene(new Scene(root, 1200, 1000));
+	        primaryStage.setScene(new Scene(root, 1300, 1000));
 	        primaryStage.show();
 	    }
 

@@ -98,7 +98,10 @@ public class Investment {
      }
 
      public Double getCurrentPrice() {
-         return setPrecision(currentPrice,2);
+    	 if (currentPrice < 0.0) {
+    		 return 0.0;
+    	 } else
+    		 return setPrecision(currentPrice,2);
      }
 
     public void setCurrentPrice (Double currentPrice){

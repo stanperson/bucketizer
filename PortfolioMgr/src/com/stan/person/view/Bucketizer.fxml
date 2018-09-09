@@ -17,9 +17,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="971.0" prefWidth="1215.0" stylesheets="@darker.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.stan.person.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="971.0" prefWidth="1250.0" stylesheets="@darker.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.stan.person.Controller">
     <children>
-        <MenuBar minHeight="-Infinity" prefHeight="30.0" prefWidth="1215.0" VBox.vgrow="ALWAYS">
+        <MenuBar minHeight="-Infinity" prefHeight="30.0" prefWidth="1260.0" VBox.vgrow="ALWAYS">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
@@ -107,7 +107,7 @@
                                 <Insets left="4.0" />
                             </padding>
                         </HBox>
-                        <TableView fx:id="portfolioTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="549.0" prefWidth="1210.0">
+                        <TableView fx:id="portfolioTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="549.0" prefWidth="1245.0">
                             <columns>
                                 <TableColumn fx:id="ticker" prefWidth="75.0" text="Ticker" />
                                 <TableColumn fx:id="description" maxWidth="500.0" minWidth="75.0" prefWidth="300.0" text="Description" />
@@ -328,7 +328,7 @@
                               <Font name="Menlo Regular" size="13.0" />
                            </font>
                         </TextArea>
-                        <Button mnemonicParsing="false" onAction="#refresh" text="Refresh">
+                        <Button mnemonicParsing="false" onAction="#refreshClicked" text="Refresh">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>

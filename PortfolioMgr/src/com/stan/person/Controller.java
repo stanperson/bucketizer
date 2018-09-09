@@ -175,10 +175,11 @@ public class Controller implements Initializable {
     @FXML
     private void refresh() {
         // update the quotes from Yahoo
+    	/*
         QuoteReader quoteReader = new QuoteReader(portfolio);
         quoteArea.clear();
         quoteArea.setText(quoteReader.getQuotesAsText());
-
+		*/
         portfolio.setDateDownloaded(reader.getDateDownloaded());
         portfolio.setPendingCash(Double.valueOf(pendingCash.getText()));
 
@@ -200,6 +201,14 @@ public class Controller implements Initializable {
     private String getTextByType(String type) {
         return setPrecision( portfolio.getTotalByType(type),2) + "(" + setPrecision(100.* portfolio.getTotalByType(type)/portfolio.getTotalValue(),2) + "%)";
 
+    }
+    
+    @FXML
+    public void refreshClicked() {
+        QuoteReader quoteReader = new QuoteReader(portfolio);
+        quoteArea.clear();
+        quoteArea.setText(quoteReader.getQuotesAsText());
+        refresh();
     }
 
     @FXML
