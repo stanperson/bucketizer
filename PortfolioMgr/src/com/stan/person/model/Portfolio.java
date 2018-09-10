@@ -1,6 +1,9 @@
 package com.stan.person.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.stan.person.utility.Math.setPrecision;
@@ -84,7 +87,16 @@ public class Portfolio {
     }
 
     public void setDateDownloaded(String dateDownloaded) {
-        this.dateDownloaded = dateDownloaded;
+    	try {
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
+    		sdf.parse(dateDownloaded);
+    		this.dateDownloaded = dateDownloaded;
+    	} catch (ParseException pe) {
+    		System.out.println("dateDownloaded incorrectly formatted, should be yyyy-MM-dd HH:mm:00, found" + dateDownloaded);
+    		pe.printStackTrace();
+    		System.exit(-1);
+    	}
+    	
     }
 
     public String getDateDownloaded() {

@@ -4,7 +4,10 @@ import com.stan.person.model.InvestmentReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -110,7 +113,20 @@ public class FidelityInvestmentReader implements InvestmentReader {
         for (String line: lines) {
             // first line has a date downloaded in it
             if (lineNo == 0) {
-                dateDownloaded = line;
+             	String origDate = line.substring(16, line.length() -1);
+            	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+            	try {
+            		Date finalDate = sdf.parse(origDate);
+            		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
+            		
+            		dateDownloaded = sdf2.format(finalDate);
+            		
+            	} catch (ParseException dfe)
+            	{
+            		System.out.println("Fidelity Investment Reader Error formatting date: " + dateDownloaded);
+            		dfe.printStackTrace();
+            		
+            	}
             }
             // second line has the column headers in it...skip it
             if (lineNo > 1) {
