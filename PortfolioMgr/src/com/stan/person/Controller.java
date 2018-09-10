@@ -1,5 +1,6 @@
 package com.stan.person;
 
+import com.stan.person.configuration.ConfigProperties;
 import com.stan.person.model.*;
 import com.stan.person.view.ColorCodedTableCellFactory;
 import javafx.collections.FXCollections;
@@ -89,7 +90,7 @@ public class Controller implements Initializable {
     private TableColumn<Investment, Double> targetPct;
     */
 
-    private final static Properties properties = new Properties();
+    //private final static Properties properties = new Properties();
 
     private InvestmentReaderFactory investmentReaderFactory = new InvestmentReaderFactory();
     private InvestmentReader reader;
@@ -99,22 +100,15 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // First, set up properties...config.properties located in project root.
 
-        try {
-            properties.load(new FileInputStream(System.getProperty("user.dir") + "/resources/"+"config.properties"));
-        } catch (Exception e) {
-            System.out.println("config.properties not found...using defaults");
-        }
-
-        File planFilePath = new File(System.getProperty("user.dir") + "/resources/"+"PortfolioPlan.csv");
+        File planFilePath = new File(System.getProperty("user.dir") + ConfigProperties.getProperty("portfolioPlanPath","/resources/PortfolioPlan.csv"));
         if (!planFilePath.exists()) {
             // for now, bark and quit
             Properties systemProp = System.getProperties();
 
             System.out.println("user.dir: " + systemProp.getProperty("user.dir"));
             System.out.println("user.home: " + systemProp.getProperty("user.home"));
-            System.out.println("Plan file at: " + planFilePath.getPath() );
+            System.out.println("Plan file not at: " + planFilePath.getPath() +"...bailing out.");
             System.exit(-1);
         }
 
@@ -123,10 +117,10 @@ public class Controller implements Initializable {
 
 
         // get the path to a Portfolio_Activity-MMM-DD-YYYY.csv file
-        File activityDirectory = new File(properties.getProperty("portfolioActivityPath", "/Users/stanperson/Downloads/"));
+        File activityDirectory = new File(ConfigProperties.getProperty("portfolioActivityPath", "/Users/stanperson/Downloads/"));
         ArrayList<File> fileInFolder = listFilesForFolder(activityDirectory);
         for (File f : fileInFolder) {
-            if (f.getName().startsWith(properties.getProperty("activityFilePrefix", "Portfolio_Position"))) {
+            if (f.getName().startsWith(ConfigProperties.getProperty("activityFilePrefix", "Portfolio_Position"))) {
                 activityFilePath.setText(f.getPath());
                 break;
             }
@@ -154,7 +148,7 @@ public class Controller implements Initializable {
         todayChange.setCellFactory(new ColorCodedTableCellFactory<>());
 
         // Read the input file (this one is from Fidelity).
-        reader = investmentReaderFactory.getInvestmentReader(properties.getProperty("investmentCompany", "Fidelity"));
+        reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
         reader.readInvestments(activityFilePath.getText());
         portfolio.setPendingCash(reader.getPendingActivity());
         portfolio.setInvestments(reader.readInvestments(activityFilePath.getText()));
@@ -166,11 +160,7 @@ public class Controller implements Initializable {
             }
         });
         refresh();
-
     }
-
-
-
 
     @FXML
     private void refresh() {
@@ -235,7 +225,7 @@ public class Controller implements Initializable {
         if (openName != null) {
             PortfolioPlan plan = PortfolioPlanReader.readPortfolioPlan(openName);
             portfolio = new Portfolio(plan);
-            reader = investmentReaderFactory.getInvestmentReader(properties.getProperty("investmentCompany", "Fidelity"));
+            reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
             reader.readInvestments(activityFilePath.getText());
             portfolio.setInvestments(reader.getInvestments());
             refresh();
