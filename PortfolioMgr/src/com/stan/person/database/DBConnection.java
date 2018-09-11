@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
 public class DBConnection {
 	// TODO: externalize in a property file
@@ -84,6 +85,18 @@ public class DBConnection {
 			System.exit(-1);		
 		}
 		return retval;
+	}
+	public static void setDate(int parameterIndex, Date value) {
+		try {
+			// convert from java.util.Date value to java.sql.Date dateValue
+			java.sql.Date dateValue = new java.sql.Date(value.getTime());
+			ps.setDate(parameterIndex, dateValue);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			closeAll();
+			System.exit(-1);		
+			}
+		
 	}
 	public static void setDouble(int parameterIndex, Double value ){
 		try {

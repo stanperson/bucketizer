@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class FidelityInvestmentReader implements InvestmentReader {
 
     private List<Investment> investments;
-    private String dateDownloaded;
+    private Date dateDownloaded= null;
     private Double pendingActivity=0.0;
 
     @Override
@@ -24,7 +24,7 @@ public class FidelityInvestmentReader implements InvestmentReader {
     }
 
     @Override
-    public String getDateDownloaded() {
+    public Date getDateDownloaded() {
         return dateDownloaded;
     }
 
@@ -77,6 +77,7 @@ public class FidelityInvestmentReader implements InvestmentReader {
             }
 
             // now look for the "date downloaded" and "Pending Activity field
+            pendingActivity = 0.0;  // reset in case it isn't found below
             while ( inputStream.hasNextLine()){
                 String line = inputStream.nextLine();
                 if (line.isEmpty()) continue;
@@ -107,7 +108,7 @@ public class FidelityInvestmentReader implements InvestmentReader {
 
         // transform from list of String (comma-delimited investments) to List of Investment objects
 
-        dateDownloaded="none found";
+        
         investments = new ArrayList<>();
 
         for (String line: lines) {
@@ -117,9 +118,8 @@ public class FidelityInvestmentReader implements InvestmentReader {
             	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
             	try {
             		Date finalDate = sdf.parse(origDate);
-            		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
-            		
-            		dateDownloaded = sdf2.format(finalDate);
+            		//SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");           		
+            		dateDownloaded = finalDate; //sdf2.format(finalDate);
             		
             	} catch (ParseException dfe)
             	{

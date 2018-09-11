@@ -148,18 +148,18 @@ public class Controller implements Initializable {
         todayChange.setCellFactory(new ColorCodedTableCellFactory<>());
 
         // Read the input file (this one is from Fidelity).
-        reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
-        reader.readInvestments(activityFilePath.getText());
-        portfolio.setPendingCash(reader.getPendingActivity());
-        portfolio.setInvestments(reader.readInvestments(activityFilePath.getText()));
-        pendingCash.setText(reader.getPendingActivity().toString());
+       // reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
+        //reader.readInvestments(activityFilePath.getText());
+        //portfolio.setPendingCash(reader.getPendingActivity());
+        //portfolio.setInvestments(reader.readInvestments(activityFilePath.getText()));
+        //pendingCash.setText(reader.getPendingActivity().toString());
 
         portfolioTableView.setOnMouseClicked((MouseEvent event) -> {
             if (event.getClickCount() > 1) {
                 tableRowSelected();
             }
         });
-        refresh();
+        //refresh();
     }
 
     @FXML
@@ -213,7 +213,9 @@ public class Controller implements Initializable {
         File openName = (new FileChooser()).showOpenDialog(window);
         if (openName != null) {
             activityFilePath.setText(openName.getPath());
+            reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
             portfolio.setInvestments(reader.readInvestments(activityFilePath.getText()));
+            portfolio.setPendingCash(reader.getPendingActivity());
             pendingCash.setText(reader.getPendingActivity().toString());
             refresh();
         }

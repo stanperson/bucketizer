@@ -11,7 +11,7 @@ import static com.stan.person.utility.Math.setPrecision;
 public class Portfolio {
     private List<Investment> investments= new ArrayList<>();
     private PortfolioPlan portfolioPlan;
-    private String dateDownloaded;
+    private Date dateDownloaded;
     private Double pendingCash= 0.0;
 
 
@@ -85,7 +85,11 @@ public class Portfolio {
     public void setPlanItems(PortfolioPlan portfolioPlan) {
         this.portfolioPlan = portfolioPlan;
     }
-
+    
+    public void setDateDownloaded(Date downloadDate) {
+    	this.dateDownloaded = downloadDate;   	
+    }
+    /*
     public void setDateDownloaded(String dateDownloaded) {
     	try {
     		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
@@ -98,8 +102,8 @@ public class Portfolio {
     	}
     	
     }
-
-    public String getDateDownloaded() {
+*/
+    public Date getDateDownloaded() {
         return dateDownloaded;
     }
 
