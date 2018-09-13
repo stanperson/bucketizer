@@ -74,17 +74,24 @@ public class DBConnection {
 			}
 		}//end finally try
 	}
-	public static int executeUpdate() {
+	private static SQLException lastSQLE= null;
+	
+	public static SQLException getLastException(){
+		return lastSQLE;
+	}
+	
+	public static boolean executeUpdate() {
 
-		int retval = 0;
+		boolean success = true;;
 		try {
-			retval= ps.executeUpdate();
+			ps.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			closeAll();
-			System.exit(-1);		
+			success= false;	
+			lastSQLE = e;
 		}
-		return retval;
+		return success;
 	}
 	public static void setDate(int parameterIndex, Date value) {
 		try {

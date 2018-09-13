@@ -105,7 +105,6 @@ public class Controller implements Initializable {
         if (!planFilePath.exists()) {
             // for now, bark and quit
             Properties systemProp = System.getProperties();
-
             System.out.println("user.dir: " + systemProp.getProperty("user.dir"));
             System.out.println("user.home: " + systemProp.getProperty("user.home"));
             System.out.println("Plan file not at: " + planFilePath.getPath() +"...bailing out.");
@@ -115,7 +114,7 @@ public class Controller implements Initializable {
         PortfolioPlan plan = PortfolioPlanReader.readPortfolioPlan(planFilePath);
         portfolio = new Portfolio(plan);
 
-
+        /*
         // get the path to a Portfolio_Activity-MMM-DD-YYYY.csv file
         File activityDirectory = new File(ConfigProperties.getProperty("portfolioActivityPath", "/Users/stanperson/Downloads/"));
         ArrayList<File> fileInFolder = listFilesForFolder(activityDirectory);
@@ -125,7 +124,7 @@ public class Controller implements Initializable {
                 break;
             }
         }
-
+		*/
         // hook up the table columns with the object (Investment) values.
         // set up special formatting.
         ticker.setCellValueFactory(new PropertyValueFactory<>("ticker"));
