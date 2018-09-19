@@ -1,6 +1,7 @@
 package com.stan.person;
 
 import com.stan.person.configuration.ConfigProperties;
+import com.stan.person.database.DBConnection.QueryStatus;
 import com.stan.person.model.*;
 import com.stan.person.view.ColorCodedTableCellFactory;
 
@@ -187,9 +188,14 @@ public class Controller implements Initializable {
             // TODO: there's a dependency on doing the reader.readInvestments before getDateDownload and pendingActivity. Fix that.
             // Should have reader do all that when it's created. (right now it's a static method...maybe should be a class!)
             reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
-            portfolio.setInvestmentActivity( reader.readInvestments(activityFilePath.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
-            pendingCash.setText(reader.getPendingActivity().toString());
-            refresh();
+            QueryStatus qs = portfolio.setInvestmentActivity( reader.readInvestments(activityFilePath.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
+            if (qs == QueryStatus.OK) {
+            	pendingCash.setText(reader.getPendingActivity().toString());
+            	refresh();
+            }
+            else {
+            	//ignore for now. TODO: duplicate key user message
+            }
         }
     }
     @FXML

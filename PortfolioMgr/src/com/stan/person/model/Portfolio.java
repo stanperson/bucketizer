@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.stan.person.database.DBConnection;
+import com.stan.person.database.DBConnection.QueryStatus;
+import com.stan.person.persistance.PortfolioPersistance;
+
 import static com.stan.person.utility.Math.setPrecision;
 
 public class Portfolio {
@@ -36,7 +40,7 @@ public class Portfolio {
             investment1.merge(investment);
         }
     }
-    public void setInvestmentActivity(List<Investment> investments, Date createDate, Double pendingCash) {
+    public QueryStatus setInvestmentActivity(List<Investment> investments, Date createDate, Double pendingCash) {
      	this.dateDownloaded = createDate;
     	this.pendingCash = pendingCash;// rather than just copy the investments parm, add one at a time
         // so can apply portfolio plan and merge if necessary.
@@ -62,6 +66,21 @@ public class Portfolio {
             investment.setActualPct(Double.valueOf(String.format("%.1f", investment.getCurrentValue()* percentConvert)));
         }
         System.out.println("Write portfolio to DB: " + dateDownloaded);
+		QueryStatus returnCode = PortfolioPersistance.PortfolioWriter(this);
+		switch (returnCode) {
+		case OK:
+			System.out.println("Update returned: " + returnCode);
+			break;
+		case DUPLICATE:
+			System.out.println("Duplicate Key: " + dateDownloaded);
+			break;
+		case FAILED:
+			DBConnection.getLastException().printStackTrace();
+			break;
+			
+		}
+		return returnCode;
+
     }
 
 

@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.Date;
 
 public class DBConnection {
+	public enum QueryStatus {OK, FAILED, DUPLICATE};
 	// TODO: externalize in a property file
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	static final String DB_URL = "jdbc:mysql://localhost/PortfolioMgr";
@@ -74,24 +75,31 @@ public class DBConnection {
 			}
 		}//end finally try
 	}
-	private static SQLException lastSQLE= null;
+	private static SQLException lastSQLE= new SQLException(); // create new empty one so I don't return a null.
 	
 	public static SQLException getLastException(){
-		return lastSQLE;
+		
+		
+			return lastSQLE;
 	}
 	
-	public static boolean executeUpdate() {
+	public static QueryStatus executeUpdate() {
 
-		boolean success = true;;
+		QueryStatus qs = QueryStatus.OK; 
 		try {
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			//e.printStackTrace();
 			closeAll();
-			success= false;	
+			
 			lastSQLE = e;
+			if (e.getSQLState().startsWith("23")) {
+				qs = QueryStatus.DUPLICATE;
+			} else {
+				qs = QueryStatus.FAILED;
+			}
 		}
-		return success;
+		return qs;
 	}
 	public static void setDate(int parameterIndex, Date value) {
 		try {
@@ -127,8 +135,11 @@ public class DBConnection {
 	public static void preparedStatement(String sql) {
 		
 		try {
-			if (conn == null) connection();
-			if (ps != null) ps.close();
+			if (ps != null) 
+				ps.close();
+			else
+				connection();
+			
 			ps = conn.prepareStatement(sql);
 		}
 		catch(SQLException e) {

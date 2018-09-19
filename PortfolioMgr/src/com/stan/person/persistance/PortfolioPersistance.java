@@ -3,6 +3,7 @@ package com.stan.person.persistance;
 import java.util.List;
 
 import com.stan.person.database.DBConnection;
+import com.stan.person.database.DBConnection.QueryStatus;
 import com.stan.person.model.Investment;
 import com.stan.person.model.Portfolio;
 import com.stan.person.model.PortfolioPlan;
@@ -12,7 +13,7 @@ public class PortfolioPersistance {
 
 
 	@SuppressWarnings("unused")
-	public static String PortfolioWriter( Portfolio portfolio) {
+	public static QueryStatus PortfolioWriter( Portfolio portfolio) {
 
 
 		Double pendingCash = portfolio.getPendingCash();
@@ -20,11 +21,11 @@ public class PortfolioPersistance {
 		DBConnection.preparedStatement(PersistenceSQL.parInsert);
 		DBConnection.setDate(1, portfolio.getDateDownloaded());
 		DBConnection.setDouble(2,pendingCash);
-		if (DBConnection.executeUpdate() ){
+		QueryStatus qs;
+		if ((qs =DBConnection.executeUpdate()) == QueryStatus.OK ){
 			DBConnection.preparedStatement(PersistenceSQL.invInsert);
 			List<Investment>investments = portfolio.getInvestments();
 			for (Investment inv: investments) {
-				System.out.println("Processing: " + inv.getTicker());
 				DBConnection.setString(1,inv.getTicker());
 				DBConnection.setString(2, inv.getDescription());
 				DBConnection.setDouble(3, inv.getCurrentPrice());
@@ -37,19 +38,20 @@ public class PortfolioPersistance {
 				DBConnection.setDouble(10, inv.getBucket3Pct());
 				DBConnection.setDouble(11, inv.getActualPct());
 				DBConnection.setDouble(12, inv.getTargetPct());
-				if (! DBConnection.executeUpdate()){
-					System.out.println("Update Failed:" + DBConnection.getLastException().getMessage());
-					return DBConnection.getLastException().getMessage();
-				} else {
-					System.out.println("success");
-				}
-			} 
-		} else {
-			System.out.println("Update Failed:" + DBConnection.getLastException().getMessage());
-			return DBConnection.getLastException().getMessage();
+				qs = DBConnection.executeUpdate();
+				} 
+		} 
+		switch (qs)  {
+		case OK:
+			break;
+		case DUPLICATE:
+			break;
+		case FAILED:
+			break;
+			
 		}
 		DBConnection.closeAll();
-		return "OK";
-	}
+		return qs;
+		}
 
 }
