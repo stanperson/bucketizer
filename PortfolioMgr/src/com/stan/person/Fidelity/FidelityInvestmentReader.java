@@ -117,10 +117,8 @@ public class FidelityInvestmentReader implements InvestmentReader {
                 if (costBasis == 0) // fudge...n/a was replaced by 0 in input file.
                     costBasis = currentValue;
                 Double targetPct = 0.0;
-                System.out.println(ticker + ": " + description + ": " + numberOfShares + ": " + currentPrice + ": " + costBasis + ": " + targetPct);
                 Investment inv = new Investment(ticker, "defaultType", description, numberOfShares, currentPrice,  costBasis, targetPct); // creates an investment object from CSV text.Investment inv = new Investment();
-                investments.add(inv);
-           
+                investments.add(inv);           
         }
         return investments;
     }
@@ -139,17 +137,17 @@ public class FidelityInvestmentReader implements InvestmentReader {
      */
     private HashMap<String, Integer> fidelityParseColumns(String[] ids, String line){
     	String[] values = line.split(",");
-    	for (int i = 0; i < values.length; i++) {
+/*    	for (int i = 0; i < values.length; i++) {
     		System.out.println(i + " " + values[i]);
     	}
-    	HashMap<String, Integer> cols = new HashMap<>();
+*/    	HashMap<String, Integer> cols = new HashMap<>();
     	for (String id: ids) {
     		boolean found = false;
     		for (int i = 0; i < values.length; i++){
     			if (values[i].contains(id)){
     				cols.put(id, new Integer(i));
     				found = true;
-    				System.out.println("Found: " + id + "at " + i );
+    				//System.out.println("Found: " + id + "at " + i );
     				break;
     			}
      		}
@@ -166,40 +164,32 @@ public class FidelityInvestmentReader implements InvestmentReader {
         return pendingActivity;
     }
     
-    List<String>  readInvestmentsV1( Scanner inputStream) {   
+    List<String>  readInvestmentsV1( Scanner inputStream) {  
+    	
     while(inputStream.hasNextLine()){
-        String line= inputStream.nextLine();        
-        if (line.isEmpty()) break;
+        String line = inputStream.nextLine();   
+        if (line.isEmpty()) continue;
         if (line.startsWith(",,,,")) continue;  // filter out the lines with just commas
         if (line.startsWith("\"\"")) continue;  // filter out lines that look like "","","","","
+        if (line.contains("Fidelity.com")) continue;
+        if (line.contains("SIPC, NYSE")) continue;
         line = line.replaceAll(Pattern.quote("$"), "");
         line = line.replaceAll(Pattern.quote("%"), "");
         line = line.replaceAll(Pattern.quote("n/a"), "0.0");
         line = line.replaceAll("--", "0");
         line = line.replaceAll("\"", "");
-        //if (line.startsWith("Account")) continue; // skip first line, has the column labels...might also use line number 1 as the key. 
-        										  // CSV has to have column headers in line number one. Fidelity might change what is in first column.
         if (line.startsWith("Date")){
-        	String origDate = line.substring(17, line.length() -1);
+        	String origDate = line.substring(16, line.length() -1);
         	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         	try {
-        		Date finalDate = sdf.parse(origDate);
-        		          		
-        		dateDownloaded = finalDate; //sdf2.format(finalDate);
+        		
+        		this.dateDownloaded = sdf.parse(origDate);; //sdf2.format(finalDate);
+        		System.out.println("readInvestmentsV1: " + dateDownloaded);
         		
         	} catch (ParseException dfe)
         	{
         		System.out.println("Fidelity Investment Reader Error formatting date: " + origDate + "using MM/dd/yyyy hh:mm a");
-        		// the other format for date is YYY-M-DD HH:MM:SS ET"
-        		sdf = new SimpleDateFormat("yyyy/MM/dd yy:mm:ss");
-        		try {
-        			Date finalDate = sdf.parse(origDate);
-        			dateDownloaded = finalDate;
-        		} catch (ParseException dfe2) {
-        			System.out.println("Fidelity Investment Reader Error formatting date: " + origDate+"using yyyy/MM/dd yy:mm:ss");
-        			dfe2.printStackTrace();
-        		}
-        		
+        		System.exit(-1);       		
         	}
         	
         } else if (line.startsWith("Pending")){
@@ -220,27 +210,30 @@ public class FidelityInvestmentReader implements InvestmentReader {
     inputStream.close();
     return lines;
     }
+    
     List<String>  readInvestmentsV2( Scanner inputStream) {   
     while(inputStream.hasNextLine()){
         String line= inputStream.nextLine();        
-        if (line.isEmpty()) break;
+        if (line.isEmpty()) continue;
         if (line.startsWith(",,,,")) continue;  // filter out the lines with just commas
         if (line.startsWith("\"\"")) continue;  // filter out lines that look like "","","","","
+        if (line.contains("Fidelity.com")) continue;
+        if (line.contains("SIPC, NYSE")) continue;
+
         line = line.replaceAll(Pattern.quote("$"), "");
         line = line.replaceAll(Pattern.quote("%"), "");
         line = line.replaceAll(Pattern.quote("n/a"), "0.0");
         line = line.replaceAll(Pattern.quote("+"), "");
-        line = line.replaceAll("--", "0");
-        //line = line.replaceAll("\"", "");
+        line = line.replaceAll("--", "0");        //line = line.replaceAll("\"", "");
         if (line.startsWith("\"Date")){
-        	String origDate = line.substring(18, line.length() -3);
-        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd yy:mm:ss");
+        	String origDate = line.substring(17, 36);
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd yy:mm:ss");
         	try {
          		dateDownloaded = sdf.parse(origDate);; //sdf2.format(finalDate);
         		
         	} catch (ParseException dfe)
         	{
-        		System.out.println("Fidelity Investment Reader Error formatting date: " + origDate + "yyyy/MM/dd yy:mm:ss");        		
+        		System.out.println("Fidelity Investment Reader Error formatting date: " + origDate + " using format yyyy/MM/dd yy:mm:ss");        		
         	}
         	
         } else if (line.startsWith("\"Pending")){
@@ -267,10 +260,8 @@ public class FidelityInvestmentReader implements InvestmentReader {
         	}
         	line += values[values.length-1]; // last one doesn't have a comma at the end
         	line = line.substring(0,line.length()-1); // split above left quotes at beginning and end.
-        	System.out.println(line);
         	lines.add(line);
-        }
-        
+        }      
     }
     inputStream.close();
     return lines;

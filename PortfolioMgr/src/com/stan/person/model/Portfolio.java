@@ -1,7 +1,5 @@
 package com.stan.person.model;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,15 +36,15 @@ public class Portfolio {
             investment1.merge(investment);
         }
     }
-    public void setInvestments(List<Investment> investments) {
-
-        // rather than just copy the investments parm, add one at a time
-        // so can apply plan and merge if necessary.
+    public void setInvestmentActivity(List<Investment> investments, Date createDate, Double pendingCash) {
+     	this.dateDownloaded = createDate;
+    	this.pendingCash = pendingCash;// rather than just copy the investments parm, add one at a time
+        // so can apply portfolio plan and merge if necessary.
         this.investments = new ArrayList<>();
         for (Investment investment: investments) {
             addInvestment(investment);
         }
-        /* 
+        /*
          * add any investments from the portfolio plan that are NOT in  List investments
          */
         for (PlanItem item: portfolioPlan.getPlanItems()) {
@@ -54,15 +52,16 @@ public class Portfolio {
         		// this plan item ticker is not in List investments...add it
         		Investment investment = new Investment(item.getTicker(), item.getType(),item.getDescription(), 0.0, -1.0, 0.0, item.getBucket2Pct() + item.getBucket3Pct() );
         		addInvestment(investment);
-        		System.out.println("adding investment " + item.getTicker());
+        		System.out.println("adding investment " + item.getTicker() + " " + item.getDescription());
         	}
-        	
+
         }
         // update actualPct in each investment, now that we have the whole set in place.
         Double percentConvert = 100.0/this.getTotalValue();
         for (Investment investment: investments) {
             investment.setActualPct(Double.valueOf(String.format("%.1f", investment.getCurrentValue()* percentConvert)));
         }
+        System.out.println("Write portfolio to DB: " + dateDownloaded);
     }
 
 
@@ -81,29 +80,13 @@ public class Portfolio {
     public PortfolioPlan getPortfolioPlan() {
     	return portfolioPlan;
     }
-    
+
     public void setPlanItems(PortfolioPlan portfolioPlan) {
         this.portfolioPlan = portfolioPlan;
     }
-    
-    public void setDateDownloaded(Date downloadDate) {
-    	this.dateDownloaded = downloadDate;   	
-    }
-    /*
-    public void setDateDownloaded(String dateDownloaded) {
-    	try {
-    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
-    		sdf.parse(dateDownloaded);
-    		this.dateDownloaded = dateDownloaded;
-    	} catch (ParseException pe) {
-    		System.out.println("dateDownloaded incorrectly formatted, should be yyyy-MM-dd HH:mm:00, found" + dateDownloaded);
-    		pe.printStackTrace();
-    		System.exit(-1);
-    	}
-    	
-    }
-*/
-    public Date getDateDownloaded() {
+
+
+     public Date getDateDownloaded() {
         return dateDownloaded;
     }
 
@@ -111,12 +94,9 @@ public class Portfolio {
         return pendingCash;
     }
 
-    public void setPendingCash(Double pendingCash) {
-        this.pendingCash = pendingCash;
-    }
 
     public Double getTotalValue() {
-
+    	// compute it on the fly.
         Double total = 0.0;
         for (Investment investment: investments) {
             total += investment.getCurrentValue();

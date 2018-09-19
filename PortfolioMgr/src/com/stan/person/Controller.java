@@ -3,6 +3,7 @@ package com.stan.person;
 import com.stan.person.configuration.ConfigProperties;
 import com.stan.person.model.*;
 import com.stan.person.view.ColorCodedTableCellFactory;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,7 +18,6 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -114,17 +114,6 @@ public class Controller implements Initializable {
         PortfolioPlan plan = PortfolioPlanReader.readPortfolioPlan(planFilePath);
         portfolio = new Portfolio(plan);
 
-        /*
-        // get the path to a Portfolio_Activity-MMM-DD-YYYY.csv file
-        File activityDirectory = new File(ConfigProperties.getProperty("portfolioActivityPath", "/Users/stanperson/Downloads/"));
-        ArrayList<File> fileInFolder = listFilesForFolder(activityDirectory);
-        for (File f : fileInFolder) {
-            if (f.getName().startsWith(ConfigProperties.getProperty("activityFilePrefix", "Portfolio_Position"))) {
-                activityFilePath.setText(f.getPath());
-                break;
-            }
-        }
-		*/
         // hook up the table columns with the object (Investment) values.
         // set up special formatting.
         ticker.setCellValueFactory(new PropertyValueFactory<>("ticker"));
@@ -145,14 +134,6 @@ public class Controller implements Initializable {
         actualPct.setCellValueFactory(new PropertyValueFactory<>("actualPct"));
         todayChange.setCellValueFactory(new PropertyValueFactory<>("todayChange"));
         todayChange.setCellFactory(new ColorCodedTableCellFactory<>());
-
-        // Read the input file (this one is from Fidelity).
-       // reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
-        //reader.readInvestments(activityFilePath.getText());
-        //portfolio.setPendingCash(reader.getPendingActivity());
-        //portfolio.setInvestments(reader.readInvestments(activityFilePath.getText()));
-        //pendingCash.setText(reader.getPendingActivity().toString());
-
         portfolioTableView.setOnMouseClicked((MouseEvent event) -> {
             if (event.getClickCount() > 1) {
                 tableRowSelected();
@@ -163,15 +144,6 @@ public class Controller implements Initializable {
 
     @FXML
     private void refresh() {
-        // update the quotes from Yahoo
-    	/*
-        QuoteReader quoteReader = new QuoteReader(portfolio);
-        quoteArea.clear();
-        quoteArea.setText(quoteReader.getQuotesAsText());
-		*/
-        portfolio.setDateDownloaded(reader.getDateDownloaded());
-        portfolio.setPendingCash(Double.valueOf(pendingCash.getText()));
-
         ObservableList<Investment> invAsList = FXCollections.observableArrayList();
         invAsList.addAll(portfolio.getInvestments());
         portfolioTableView.getItems().clear();
@@ -191,7 +163,7 @@ public class Controller implements Initializable {
         return setPrecision( portfolio.getTotalByType(type),2) + "(" + setPrecision(100.* portfolio.getTotalByType(type)/portfolio.getTotalValue(),2) + "%)";
 
     }
-    
+
     @FXML
     public void refreshClicked() {
         QuoteReader quoteReader = new QuoteReader(portfolio);
@@ -212,9 +184,10 @@ public class Controller implements Initializable {
         File openName = (new FileChooser()).showOpenDialog(window);
         if (openName != null) {
             activityFilePath.setText(openName.getPath());
+            // TODO: there's a dependency on doing the reader.readInvestments before getDateDownload and pendingActivity. Fix that.
+            // Should have reader do all that when it's created. (right now it's a static method...maybe should be a class!)
             reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
-            portfolio.setInvestments(reader.readInvestments(activityFilePath.getText()));
-            portfolio.setPendingCash(reader.getPendingActivity());
+            portfolio.setInvestmentActivity( reader.readInvestments(activityFilePath.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
             pendingCash.setText(reader.getPendingActivity().toString());
             refresh();
         }
@@ -228,7 +201,7 @@ public class Controller implements Initializable {
             portfolio = new Portfolio(plan);
             reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
             reader.readInvestments(activityFilePath.getText());
-            portfolio.setInvestments(reader.getInvestments());
+            portfolio.setInvestmentActivity(reader.readInvestments(activityFilePath.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
             refresh();
         }
 
@@ -268,30 +241,5 @@ public class Controller implements Initializable {
         }
         return filesInFolder;
     }
-/*
-    private class FormatTableCell extends TableCell<Investment,Double> {
-        @Override
-        protected void updateItem(Double item, boolean empty) {
-            super.updateItem(item, empty);
 
-            if (empty) {
-                setText(null);
-            }
-            if (item != null) {
-                if (item.compareTo(0.0) == 0) {
-                    setText(null);
-                } else if (item.compareTo(1.0) == 0) {
-                    setText(null);
-                } else {
-                    if (item.compareTo(0.0) > 0)
-                        setTextFill(Color.GREEN);
-                    else
-                        setTextFill(Color.RED);
-                    setText(setPrecision(item, 2).toString());
-                }
-            }
-
-        }
-    }
-*/
 }
