@@ -1,8 +1,13 @@
 package com.stan.person.persistance;
 
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.stan.person.database.DBConnection;
+import com.stan.person.database.DBConnection.DBCommand;
 import com.stan.person.database.DBConnection.QueryStatus;
 import com.stan.person.model.Investment;
 import com.stan.person.model.Portfolio;
@@ -14,7 +19,6 @@ public class PortfolioPersistance {
 
 	@SuppressWarnings("unused")
 	public static QueryStatus PortfolioWriter( Portfolio portfolio) {
-
 
 		Double pendingCash = portfolio.getPendingCash();
 		PortfolioPlan plan = portfolio.getPortfolioPlan();
@@ -39,8 +43,8 @@ public class PortfolioPersistance {
 				DBConnection.setDouble(11, inv.getActualPct());
 				DBConnection.setDouble(12, inv.getTargetPct());
 				qs = DBConnection.executeUpdate();
-				} 
-		} 
+			}
+		}
 		switch (qs)  {
 		case OK:
 			break;
@@ -48,10 +52,66 @@ public class PortfolioPersistance {
 			break;
 		case FAILED:
 			break;
-			
+
 		}
 		DBConnection.closeAll();
 		return qs;
+	}
+
+	public static QueryStatus PortfolioReader( DBCommand dc,Portfolio portfolio ) {
+		QueryStatus qs = QueryStatus.OK;
+		switch ( dc  ){
+		case NEWEST:
+			DBConnection.preparedStatement(PersistenceSQL.parFindNewest);
+			qs = DBConnection.executeQuery();
+			switch (qs) {
+			case OK:
+				hydratePortfolio(DBConnection.getRS(), portfolio);
+				break;
+			default:
+				qs = QueryStatus.FAILED;
+				break;
+			}
+			break;
+		default:
+			System.out.println("PortfolioPersistance has not implemented: " + dc);
+			qs = QueryStatus.FAILED;
+			break;
+
 		}
+		return qs;
+	}
+
+	private static void hydratePortfolio(ResultSet rs, Portfolio portfolio){
+		List<Investment> investments= new ArrayList<>();
+		try {
+			Double pc = 0.0;
+			Date dd= null;
+			int rsCntr = 0;
+			while (rs.next()) {
+				if (rsCntr++ == 0) {
+					dd = (Date)rs.getDate("activityDate");
+					pc = rs.getDouble("pendingCash");
+				}
+				System.out.println("creating: " + rs.getString("ticker") +  ": " + rs.getString("description"));
+				Investment inv = new Investment(rs.getString("ticker"),
+												rs.getString("type"),
+												rs.getString("inv.description"),
+												rs.getDouble("numberShares"),
+												rs.getDouble("currentPrice"),
+												rs.getDouble("costBasis"),
+												rs.getDouble("targetPct"));
+
+				investments.add(inv);
+			}
+			portfolio.setInvestmentActivity(investments, dd, pc);
+			portfolio.setDataSource("Database: " + dd);
+
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+	}
 
 }

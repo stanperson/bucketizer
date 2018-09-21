@@ -3,12 +3,14 @@ package com.stan.person.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
 public class DBConnection {
-	public enum QueryStatus {OK, FAILED, DUPLICATE};
+	public enum QueryStatus {OK, FAILED, DUPLICATE, EMPTY};
+	public enum DBCommand {NEWEST, NEXT, PREV, OLDEST}
 	// TODO: externalize in a property file
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	static final String DB_URL = "jdbc:mysql://localhost/PortfolioMgr";
@@ -38,7 +40,7 @@ public class DBConnection {
 
 	@SuppressWarnings("unused")
 	private static Connection getConn() {
-		if (conn == null) 
+		if (conn == null)
 			connection();
 		return conn;
 	}
@@ -76,22 +78,37 @@ public class DBConnection {
 		}//end finally try
 	}
 	private static SQLException lastSQLE= new SQLException(); // create new empty one so I don't return a null.
-	
+
 	public static SQLException getLastException(){
-		
-		
+
+
 			return lastSQLE;
+	}
+	private static ResultSet rs;
+	public static QueryStatus executeQuery() {
+		QueryStatus qs = QueryStatus.OK;
+		try {
+			rs = ps.executeQuery();
+		} catch (SQLException e) {
+			System.out.println("Query error: " + e.getMessage());
+			qs = QueryStatus.FAILED;
+		}
+		
+		return qs;
+	}
+	public static ResultSet getRS() {
+		return rs;
 	}
 	
 	public static QueryStatus executeUpdate() {
 
-		QueryStatus qs = QueryStatus.OK; 
+		QueryStatus qs = QueryStatus.OK;
 		try {
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			//e.printStackTrace();
 			closeAll();
-			
+
 			lastSQLE = e;
 			if (e.getSQLState().startsWith("23")) {
 				qs = QueryStatus.DUPLICATE;
@@ -109,9 +126,9 @@ public class DBConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			closeAll();
-			System.exit(-1);		
+			System.exit(-1);
 			}
-		
+
 	}
 	public static void setDouble(int parameterIndex, Double value ){
 		try {
@@ -119,7 +136,7 @@ public class DBConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			closeAll();
-			System.exit(-1);		
+			System.exit(-1);
 			}
 	}
 	public static void setString(int parameterIndex, String value ){
@@ -128,18 +145,16 @@ public class DBConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			closeAll();
-			System.exit(-1);		
+			System.exit(-1);
 			}
 	}
 
 	public static void preparedStatement(String sql) {
-		
+
 		try {
-			if (ps != null) 
+			if (ps != null)
 				ps.close();
-			else
-				connection();
-			
+			connection();
 			ps = conn.prepareStatement(sql);
 		}
 		catch(SQLException e) {
@@ -147,7 +162,7 @@ public class DBConnection {
 			closeAll();
 			System.exit(-1);
 		}
-		
+
 	}
 }
 

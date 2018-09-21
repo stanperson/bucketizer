@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.stan.person.database.DBConnection;
+import com.stan.person.database.DBConnection.DBCommand;
 import com.stan.person.database.DBConnection.QueryStatus;
 import com.stan.person.persistance.PortfolioPersistance;
 
@@ -15,12 +16,16 @@ public class Portfolio {
     private PortfolioPlan portfolioPlan;
     private Date dateDownloaded;
     private Double pendingCash= 0.0;
+    private String dataSource = "None";
 
 
     // can't create a new portfolio without having a portfolio plan. Need a portfolio plan to classify and set up bucket
     // parameters.
     public Portfolio(PortfolioPlan portfolioPlan) {
-        this.portfolioPlan = portfolioPlan;
+    	this.portfolioPlan = portfolioPlan;
+    	// find newest portfolio activity in DB.
+
+    	PortfolioPersistance.PortfolioReader(DBCommand.NEWEST, this); // find the newest portfolio activity collection in DB
     }
 
     private void addInvestment(Investment investment) {
@@ -72,18 +77,26 @@ public class Portfolio {
 			System.out.println("Update returned: " + returnCode);
 			break;
 		case DUPLICATE:
+			dataSource = "DB: " + dateDownloaded;
 			System.out.println("Duplicate Key: " + dateDownloaded);
+			
 			break;
 		case FAILED:
 			DBConnection.getLastException().printStackTrace();
 			break;
-			
+
 		}
 		return returnCode;
 
     }
 
+    public void setDataSource(String ds) {
+    	dataSource = ds;
 
+    }
+    public String getDataSource() {
+    	return this.dataSource;
+    }
     public Investment get(String ticker) {
         for (Investment inv: investments )
             if (inv.getTicker().equalsIgnoreCase(ticker)) {

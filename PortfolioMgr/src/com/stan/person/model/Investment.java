@@ -8,6 +8,7 @@ public class Investment {
 
      private String ticker ="default";
      private String description="default";
+     private Double quotePrice = 0.0;
      private Double numberOfShares = 0.;
      private Double currentPrice = 0.;
      private Double currentValue = 0.;
@@ -103,7 +104,12 @@ public class Investment {
     	 } else
     		 return setPrecision(currentPrice,2);
      }
-
+     public void setQuotePrice(Double quotePrice) {
+    	 this.quotePrice = quotePrice;
+     }
+     public Double getQuotePrice(){
+    	 return this.quotePrice;
+     }
     public void setCurrentPrice (Double currentPrice){
 
         this.currentPrice = currentPrice;

@@ -44,6 +44,8 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<Investment, String> type;
     @FXML
+    private TableColumn<Investment,Double> quotePrice;
+    @FXML
     private TableColumn<Investment, Double> numberOfShares;
     @FXML
     private TableColumn<Investment, Double> currentPrice;
@@ -119,6 +121,7 @@ public class Controller implements Initializable {
         // set up special formatting.
         ticker.setCellValueFactory(new PropertyValueFactory<>("ticker"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        quotePrice.setCellValueFactory(new PropertyValueFactory<>("quotePrice"));
         type.setCellValueFactory(new PropertyValueFactory<>("type"));
         numberOfShares.setCellValueFactory(new PropertyValueFactory<>("numberOfShares"));
         currentPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
@@ -140,13 +143,14 @@ public class Controller implements Initializable {
                 tableRowSelected();
             }
         });
-        //refresh();
+        refresh();
     }
 
     @FXML
     private void refresh() {
         ObservableList<Investment> invAsList = FXCollections.observableArrayList();
         invAsList.addAll(portfolio.getInvestments());
+        activityFilePath.setText(portfolio.getDataSource());
         portfolioTableView.getItems().clear();
         portfolioTableView.setItems(invAsList);
         portfolioValue.setText( setPrecision( portfolio.getTotalValue(),2).toString());
@@ -189,13 +193,22 @@ public class Controller implements Initializable {
             // Should have reader do all that when it's created. (right now it's a static method...maybe should be a class!)
             reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
             QueryStatus qs = portfolio.setInvestmentActivity( reader.readInvestments(activityFilePath.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
-            if (qs == QueryStatus.OK) {
+            switch(qs) {
+            case OK:
+            	activityFilePath.setText(openName.getPath());
             	pendingCash.setText(reader.getPendingActivity().toString());
             	refresh();
+            	break;
+            case DUPLICATE:
+            	//activityFilePath.setText("From DB: " + portfolio.getDateDownloaded().toString());
+            	pendingCash.setText(portfolio.getPendingCash().toString());
+            	refresh();
+            	break;
+            default:
+            	activityFilePath.setText("UNKNOWN STATE");
+            	break;
             }
-            else {
-            	//ignore for now. TODO: duplicate key user message
-            }
+
         }
     }
     @FXML

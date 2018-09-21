@@ -54,7 +54,7 @@ public class QuoteReader {
 
             if (inv != null) {
             	if (quote.getPrice().doubleValue() > 0.0) {
-            		inv.setCurrentPrice(quote.getPrice().setScale(2,RoundingMode.HALF_UP).doubleValue());
+            		inv.setQuotePrice(quote.getPrice().setScale(2,RoundingMode.HALF_UP).doubleValue());
             		inv.setTodayChange( gainLoss);
             		inv.setAbove50Day( quote.getChange50().setScale(2,RoundingMode.HALF_UP).doubleValue());
             		inv.setAbove200Day(quote.getChange200().setScale(2,RoundingMode.HALF_UP).doubleValue());

@@ -13,4 +13,13 @@ public class PersistenceSQL {
 					+ "VALUES"
 					+ "(?,?,?,?,?,?,?,?,?,?,?,?)";
 
+
+	public static final String parFindNewest =
+			"SELECT *   FROM par " +
+			"LEFT JOIN inv "+
+			"ON par.activityDate = inv.priceDateTime "+
+			"where activityDate = (select max(activityDate) from par);";
+
+
 }
+
