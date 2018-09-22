@@ -32,7 +32,7 @@ import static com.stan.person.utility.Math.setPrecision;
 
 public class Controller implements Initializable {
     @FXML
-    private TextField activityFilePath;
+    private TextField dataSource;
     @FXML
     private TextField pendingCash;
     @FXML
@@ -62,7 +62,7 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<Investment, Double> targetPct;
     @FXML
-    private TableColumn<Investment, Double> todayChange;
+    private TableColumn<Investment, Double> changeFromBaseline;
     @FXML
     private TableColumn<Investment, Double> above50Day;
     @FXML
@@ -122,6 +122,7 @@ public class Controller implements Initializable {
         ticker.setCellValueFactory(new PropertyValueFactory<>("ticker"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
         quotePrice.setCellValueFactory(new PropertyValueFactory<>("quotePrice"));
+        quotePrice.setCellFactory(new ColorCodedTableCellFactory<>());
         type.setCellValueFactory(new PropertyValueFactory<>("type"));
         numberOfShares.setCellValueFactory(new PropertyValueFactory<>("numberOfShares"));
         currentPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
@@ -136,8 +137,8 @@ public class Controller implements Initializable {
         gainWithPct.setCellFactory(new ColorCodedTableCellFactory<>());
         targetPct.setCellValueFactory(new PropertyValueFactory<>("targetPct"));
         actualPct.setCellValueFactory(new PropertyValueFactory<>("actualPct"));
-        todayChange.setCellValueFactory(new PropertyValueFactory<>("todayChange"));
-        todayChange.setCellFactory(new ColorCodedTableCellFactory<>());
+        changeFromBaseline.setCellValueFactory(new PropertyValueFactory<>("changeFromBaseline"));
+        changeFromBaseline.setCellFactory(new ColorCodedTableCellFactory<>());
         portfolioTableView.setOnMouseClicked((MouseEvent event) -> {
             if (event.getClickCount() > 1) {
                 tableRowSelected();
@@ -149,8 +150,9 @@ public class Controller implements Initializable {
     @FXML
     private void refresh() {
         ObservableList<Investment> invAsList = FXCollections.observableArrayList();
+              
         invAsList.addAll(portfolio.getInvestments());
-        activityFilePath.setText(portfolio.getDataSource());
+        dataSource.setText(portfolio.getDataSource());
         portfolioTableView.getItems().clear();
         portfolioTableView.setItems(invAsList);
         portfolioValue.setText( setPrecision( portfolio.getTotalValue(),2).toString());
@@ -188,24 +190,24 @@ public class Controller implements Initializable {
         Stage window = Main.getWindow();
         File openName = (new FileChooser()).showOpenDialog(window);
         if (openName != null) {
-            activityFilePath.setText(openName.getPath());
+
             // TODO: there's a dependency on doing the reader.readInvestments before getDateDownload and pendingActivity. Fix that.
             // Should have reader do all that when it's created. (right now it's a static method...maybe should be a class!)
             reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
-            QueryStatus qs = portfolio.setInvestmentActivity( reader.readInvestments(activityFilePath.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
+            QueryStatus qs = portfolio.setInvestmentActivity( reader.readInvestments(openName.getPath()), reader.getDateDownloaded(), reader.getPendingActivity());
             switch(qs) {
             case OK:
-            	activityFilePath.setText(openName.getPath());
+
             	pendingCash.setText(reader.getPendingActivity().toString());
             	refresh();
             	break;
             case DUPLICATE:
-            	//activityFilePath.setText("From DB: " + portfolio.getDateDownloaded().toString());
+
             	pendingCash.setText(portfolio.getPendingCash().toString());
             	refresh();
             	break;
             default:
-            	activityFilePath.setText("UNKNOWN STATE");
+            	dataSource.setText("UNKNOWN QS:" + qs);
             	break;
             }
 
@@ -219,8 +221,8 @@ public class Controller implements Initializable {
             PortfolioPlan plan = PortfolioPlanReader.readPortfolioPlan(openName);
             portfolio = new Portfolio(plan);
             reader = investmentReaderFactory.getInvestmentReader(ConfigProperties.getProperty("investmentCompany", "Fidelity"));
-            reader.readInvestments(activityFilePath.getText());
-            portfolio.setInvestmentActivity(reader.readInvestments(activityFilePath.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
+            reader.readInvestments(dataSource.getText());
+            portfolio.setInvestmentActivity(reader.readInvestments(dataSource.getText()), reader.getDateDownloaded(), reader.getPendingActivity());
             refresh();
         }
 

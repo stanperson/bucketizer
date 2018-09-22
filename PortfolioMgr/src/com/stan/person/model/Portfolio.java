@@ -10,6 +10,7 @@ import com.stan.person.database.DBConnection.QueryStatus;
 import com.stan.person.persistance.PortfolioPersistance;
 
 import static com.stan.person.utility.Math.setPrecision;
+import static com.stan.person.utility.Date.dateAsString;
 
 public class Portfolio {
     private List<Investment> investments= new ArrayList<>();
@@ -25,10 +26,9 @@ public class Portfolio {
     	this.portfolioPlan = portfolioPlan;
     	// find newest portfolio activity in DB.
 
-    	PortfolioPersistance.PortfolioReader(DBCommand.NEWEST, this); // find the newest portfolio activity collection in DB
+    	PortfolioPersistance.portfolioReader(DBCommand.NEWEST, this); // find the newest portfolio activity collection in DB
     }
-
-    private void addInvestment(Investment investment) {
+  private void addInvestment(Investment investment) {
         String ticker = investment.getTicker();
         Investment investment1 = get(ticker);
         if (investment1 == null) {
@@ -71,19 +71,23 @@ public class Portfolio {
             investment.setActualPct(Double.valueOf(String.format("%.1f", investment.getCurrentValue()* percentConvert)));
         }
         System.out.println("Write portfolio to DB: " + dateDownloaded);
-		QueryStatus returnCode = PortfolioPersistance.PortfolioWriter(this);
+		QueryStatus returnCode = PortfolioPersistance.portfolioWriter(this);
 		switch (returnCode) {
 		case OK:
+			dataSource = "File: " + dateAsString(dateDownloaded);
 			System.out.println("Update returned: " + returnCode);
 			break;
 		case DUPLICATE:
-			dataSource = "DB: " + dateDownloaded;
-			System.out.println("Duplicate Key: " + dateDownloaded);
-			
+			dataSource = "DB: " + dateAsString(dateDownloaded);
+			System.out.println("Duplicate Key: " + dateAsString(dateDownloaded));
+
 			break;
 		case FAILED:
+			dataSource = "None: " + DBConnection.getLastException().getMessage();
 			DBConnection.getLastException().printStackTrace();
 			break;
+		case EMPTY:
+			dataSource = "Empty dataset: " + dateAsString(dateDownloaded);
 
 		}
 		return returnCode;

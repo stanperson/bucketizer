@@ -20,7 +20,7 @@ public class Investment {
      private Double bucket1Pct = 0.;
      private Double bucket2Pct = 0.;
      private Double bucket3Pct = 0.;
-     private Double todayChange = 0.0;
+     private Double changeFromBaseline = 0.0;
      private Double above50Day = 0.0;
      private Double above200Day = 0.0;
 
@@ -183,12 +183,12 @@ public class Investment {
          this.actualPct = actualPct;
      }
 
-    public Double getTodayChange() {
-        return todayChange;
+    public Double getChangeFromBaseline() {
+        return changeFromBaseline;
     }
 
-    public void setTodayChange(Double todayChange) {
-        this.todayChange = todayChange;
+    public void setChangeFromBaseline(Double todayChange) {
+        this.changeFromBaseline = todayChange;
     }
 
     public Double getAbove50Day() {

@@ -14,7 +14,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class FidelityInvestmentReader implements InvestmentReader {
-	
+
     /*
     CSV from Fidelity has the first line set to:
        1: "Account Name/Number",
@@ -33,7 +33,7 @@ public class FidelityInvestmentReader implements InvestmentReader {
        15: "Type"
 
        There are several blank/text lines and then a Date down loaded field.
-		
+
 		The new CSV format has different order to the columns:
 		1: "Account",
 		2: "Symbol", <-----------
@@ -56,12 +56,12 @@ public class FidelityInvestmentReader implements InvestmentReader {
     private Date dateDownloaded= null;
     private Double pendingActivity=0.0;
 	final String SYMBOL = "Symbol";
-	final String DESCRIPTION = "Description"; 
+	final String DESCRIPTION = "Description";
 	final String LASTPRICE = "Last Price";
 	final String CURRENTVALUE = "Current Value";
 	final String QUANTITY = "Quantity";
 	final String COSTBASIS = "Cost Basis Total";
-	
+
 	String[] columnIds = {SYMBOL, DESCRIPTION, LASTPRICE, CURRENTVALUE, QUANTITY, COSTBASIS};
 	HashMap <String, Integer>columnMap= null;
 	List<String> lines = new ArrayList<>();
@@ -86,8 +86,8 @@ public class FidelityInvestmentReader implements InvestmentReader {
     	try{
     		File file= new File(filePath);
     		inputStream = new Scanner(file);
-    		pendingActivity = 0.0;  // reset in case it isn't found below   		
-    		String columnLabels = inputStream.nextLine();    		
+    		pendingActivity = 0.0;  // reset in case it isn't found below
+    		String columnLabels = inputStream.nextLine();
         	columnMap = fidelityParseColumns(columnIds, columnLabels);
         	int versionNumber = fidelityVersion(columnMap); // try and figure out the version number from the labels.
     		if (versionNumber == 1) {
@@ -99,14 +99,14 @@ public class FidelityInvestmentReader implements InvestmentReader {
     		e.printStackTrace();
     		System.exit(-1);
     	}
-        
+
 
         // transform from list of String (comma-delimited investments) to List of Investment objects
         investments = new ArrayList<>();
 
-        for (String line: lines) {         
+        for (String line: lines) {
                 String[] values = line.split(",") ;
- 
+
                 String ticker = values[columnMap.get(SYMBOL).intValue()];
                 String description = values[columnMap.get(DESCRIPTION).intValue()];
                 Double numberOfShares =  Double.parseDouble(values[columnMap.get(QUANTITY).intValue()]);
@@ -118,36 +118,32 @@ public class FidelityInvestmentReader implements InvestmentReader {
                     costBasis = currentValue;
                 Double targetPct = 0.0;
                 Investment inv = new Investment(ticker, "defaultType", description, numberOfShares, currentPrice,  costBasis, targetPct); // creates an investment object from CSV text.Investment inv = new Investment();
-                investments.add(inv);           
+                investments.add(inv);
         }
         return investments;
     }
-    
-    private int fidelityVersion(HashMap<String,Integer> colMap) {    	
+
+    private int fidelityVersion(HashMap<String,Integer> colMap) {
     	int version = 1;
     	if (colMap.get(QUANTITY).intValue() == 10) {
     		version = 2;
     	}
     	return version;
     }
-    
+
     /*
-     * input is an array of strings that has the text to look for in the line. The returned hash map has the id and the column 
+     * input is an array of strings that has the text to look for in the line. The returned hash map has the id and the column
      * number it was found in. Line is the first line of a CSV file that contains column labels.
      */
     private HashMap<String, Integer> fidelityParseColumns(String[] ids, String line){
     	String[] values = line.split(",");
-/*    	for (int i = 0; i < values.length; i++) {
-    		System.out.println(i + " " + values[i]);
-    	}
-*/    	HashMap<String, Integer> cols = new HashMap<>();
+    	HashMap<String, Integer> cols = new HashMap<>();
     	for (String id: ids) {
     		boolean found = false;
     		for (int i = 0; i < values.length; i++){
     			if (values[i].contains(id)){
     				cols.put(id, new Integer(i));
     				found = true;
-    				//System.out.println("Found: " + id + "at " + i );
     				break;
     			}
      		}
@@ -163,11 +159,11 @@ public class FidelityInvestmentReader implements InvestmentReader {
     public Double getPendingActivity() {
         return pendingActivity;
     }
-    
-    List<String>  readInvestmentsV1( Scanner inputStream) {  
-    	
+
+    List<String>  readInvestmentsV1( Scanner inputStream) {
+
     while(inputStream.hasNextLine()){
-        String line = inputStream.nextLine();   
+        String line = inputStream.nextLine();
         if (line.isEmpty()) continue;
         if (line.startsWith(",,,,")) continue;  // filter out the lines with just commas
         if (line.startsWith("\"\"")) continue;  // filter out lines that look like "","","","","
@@ -182,16 +178,16 @@ public class FidelityInvestmentReader implements InvestmentReader {
         	String origDate = line.substring(16, line.length() -1);
         	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         	try {
-        		
+
         		this.dateDownloaded = sdf.parse(origDate);; //sdf2.format(finalDate);
         		System.out.println("readInvestmentsV1: " + dateDownloaded);
-        		
+
         	} catch (ParseException dfe)
         	{
         		System.out.println("Fidelity Investment Reader Error formatting date: " + origDate + "using MM/dd/yyyy hh:mm a");
-        		System.exit(-1);       		
+        		System.exit(-1);
         	}
-        	
+
         } else if (line.startsWith("Pending")){
         	String[] values = line.split(",");
             try {
@@ -201,19 +197,19 @@ public class FidelityInvestmentReader implements InvestmentReader {
                 pendingActivity = 0.0;
                 System.out.println("Pending activity number format exception:" + values[1] + "in Portfolio_Activity_File");
             }
-        	
+
         } else {
         	lines.add(line);
         }
-        
+
     }
     inputStream.close();
     return lines;
     }
-    
-    List<String>  readInvestmentsV2( Scanner inputStream) {   
+
+    List<String>  readInvestmentsV2( Scanner inputStream) {
     while(inputStream.hasNextLine()){
-        String line= inputStream.nextLine();        
+        String line= inputStream.nextLine();
         if (line.isEmpty()) continue;
         if (line.startsWith(",,,,")) continue;  // filter out the lines with just commas
         if (line.startsWith("\"\"")) continue;  // filter out lines that look like "","","","","
@@ -230,12 +226,12 @@ public class FidelityInvestmentReader implements InvestmentReader {
         	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd yy:mm:ss");
         	try {
          		dateDownloaded = sdf.parse(origDate);; //sdf2.format(finalDate);
-        		
+
         	} catch (ParseException dfe)
         	{
-        		System.out.println("Fidelity Investment Reader Error formatting date: " + origDate + " using format yyyy/MM/dd yy:mm:ss");        		
+        		System.out.println("Fidelity Investment Reader Error formatting date: " + origDate + " using format yyyy/MM/dd yy:mm:ss");
         	}
-        	
+
         } else if (line.startsWith("\"Pending")){
         	String[] values = line.split(",");
             try {
@@ -245,9 +241,9 @@ public class FidelityInvestmentReader implements InvestmentReader {
                 pendingActivity = 0.0;
                 System.out.println("Pending activity number format exception:" + values[1] + "in Portfolio_Activity_File");
             }
-        	
+
         } else {
-        	
+
         	// we have to get rid of all the quotes and ,'s in doubles. First split the line on "," and then get rid of embedded comma
         	String [] values = line.split("\",\"");
         	for (int i = 0; i < values.length; i++){
@@ -261,10 +257,10 @@ public class FidelityInvestmentReader implements InvestmentReader {
         	line += values[values.length-1]; // last one doesn't have a comma at the end
         	line = line.substring(0,line.length()-1); // split above left quotes at beginning and end.
         	lines.add(line);
-        }      
+        }
     }
     inputStream.close();
     return lines;
-    } 
+    }
 }
 

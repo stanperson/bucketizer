@@ -1,16 +1,16 @@
 package com.stan.person.model;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
-import yahoofinance.quotes.stock.StockQuote;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+import yahoofinance.quotes.stock.StockQuote;
 
 public class QuoteReader {
 
@@ -55,7 +55,11 @@ public class QuoteReader {
             if (inv != null) {
             	if (quote.getPrice().doubleValue() > 0.0) {
             		inv.setQuotePrice(quote.getPrice().setScale(2,RoundingMode.HALF_UP).doubleValue());
-            		inv.setTodayChange( gainLoss);
+            		if (inv.getCurrentPrice() > 0.0) {
+            			inv.setChangeFromBaseline( quote.getPrice().setScale(2,RoundingMode.HALF_UP).doubleValue()-inv.getCurrentPrice());
+            		} else {
+            			inv.setChangeFromBaseline(0.0);
+            		}
             		inv.setAbove50Day( quote.getChange50().setScale(2,RoundingMode.HALF_UP).doubleValue());
             		inv.setAbove200Day(quote.getChange200().setScale(2,RoundingMode.HALF_UP).doubleValue());
             	} else {
@@ -90,8 +94,8 @@ public class QuoteReader {
             try {
 
                 stocks = YahooFinance.get(allSymbols);
-                int size = stocks.size();
-                for (int i = 0; i < size; i++) {
+
+                for (int i = 0; i < stocks.size(); i++) {
                     Stock stock = stocks.get(allSymbols[i]);
                     if (stock != null) {
                         StockQuote sq = stock.getQuote();
@@ -99,13 +103,13 @@ public class QuoteReader {
                         BigDecimal price = sq.getPrice();
                         if (price.doubleValue() == 0.0)
                         	System.out.println("Caution...quoted price is zero for ticker: " + symbol);
-                    
+
                         BigDecimal open = sq.getOpen();
                         BigDecimal change = sq.getChange();
                         BigDecimal change50 = sq.getChangeFromAvg50();
                         BigDecimal change200 = sq.getChangeFromAvg200();
                     quotes.add(new Quote(symbol, price, open, change, change50, change200));
-                       
+
                     } else {
                         System.out.println("Nothing available for " + symbols[i]);
                     }

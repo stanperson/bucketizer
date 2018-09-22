@@ -121,8 +121,9 @@ public class DBConnection {
 	public static void setDate(int parameterIndex, Date value) {
 		try {
 			// convert from java.util.Date value to java.sql.Date dateValue
-			java.sql.Date dateValue = new java.sql.Date(value.getTime());
-			ps.setDate(parameterIndex, dateValue);
+			
+			java.sql.Timestamp dateValue = new java.sql.Timestamp(value.getTime());
+			ps.setTimestamp(parameterIndex, dateValue);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			closeAll();

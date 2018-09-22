@@ -18,7 +18,7 @@ public class PortfolioPersistance {
 
 
 	@SuppressWarnings("unused")
-	public static QueryStatus PortfolioWriter( Portfolio portfolio) {
+	public static QueryStatus portfolioWriter( Portfolio portfolio) {
 
 		Double pendingCash = portfolio.getPendingCash();
 		PortfolioPlan plan = portfolio.getPortfolioPlan();
@@ -58,7 +58,7 @@ public class PortfolioPersistance {
 		return qs;
 	}
 
-	public static QueryStatus PortfolioReader( DBCommand dc,Portfolio portfolio ) {
+	public static QueryStatus portfolioReader( DBCommand dc,Portfolio portfolio ) {
 		QueryStatus qs = QueryStatus.OK;
 		switch ( dc  ){
 		case NEWEST:
@@ -93,7 +93,6 @@ public class PortfolioPersistance {
 					dd = (Date)rs.getDate("activityDate");
 					pc = rs.getDouble("pendingCash");
 				}
-				System.out.println("creating: " + rs.getString("ticker") +  ": " + rs.getString("description"));
 				Investment inv = new Investment(rs.getString("ticker"),
 												rs.getString("type"),
 												rs.getString("inv.description"),
@@ -105,7 +104,7 @@ public class PortfolioPersistance {
 				investments.add(inv);
 			}
 			portfolio.setInvestmentActivity(investments, dd, pc);
-			portfolio.setDataSource("Database: " + dd);
+			
 
 		}
 		catch (SQLException e) {
