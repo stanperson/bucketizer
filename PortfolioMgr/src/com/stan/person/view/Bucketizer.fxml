@@ -113,9 +113,9 @@
                                 <TableColumn fx:id="ticker" prefWidth="75.0" text="Ticker" />
                                 <TableColumn fx:id="description" maxWidth="500.0" minWidth="75.0" prefWidth="300.0" text="Description" />
                         <TableColumn fx:id="quotePrice" prefWidth="75.0" text="Quote" />
-                        <TableColumn fx:id="changeFromBaseline" prefWidth="75.0" text="BaseChange" />
-                        <TableColumn fx:id="above50Day" prefWidth="75.0" text="50Day" />
-                        <TableColumn fx:id="above200Day" prefWidth="75.0" text="200Day" />
+                        <TableColumn fx:id="changeFromBaseline" prefWidth="75.0" text="PirceChange" />
+                        <TableColumn fx:id="valueDelta" prefWidth="75.0" text="ValueChange" />
+                        <TableColumn fx:id="above200Day" prefWidth="75.0" />
                         <TableColumn fx:id="gainWithPct" prefWidth="125.0" text="Gain (%)" />
                                 <TableColumn fx:id="currentPrice" prefWidth="75.0" text="Price/Share" />
                                 <TableColumn fx:id="numberOfShares" prefWidth="75.0" text="Shares" />
@@ -330,7 +330,7 @@
                               <Font name="Menlo Regular" size="13.0" />
                            </font>
                         </TextArea>
-                        <Button mnemonicParsing="false" onAction="#refreshClicked" text="Refresh">
+                        <Button mnemonicParsing="false" onAction="#refreshClicked" text="Get Quotes">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>

@@ -64,7 +64,7 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<Investment, Double> changeFromBaseline;
     @FXML
-    private TableColumn<Investment, Double> above50Day;
+    private TableColumn<Investment, Double> valueDelta	;
     @FXML
     private TableColumn<Investment, Double> above200Day;
     @FXML
@@ -127,8 +127,8 @@ public class Controller implements Initializable {
         numberOfShares.setCellValueFactory(new PropertyValueFactory<>("numberOfShares"));
         currentPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
         //currentPrice.setCellFactory(new ColorCodedTableCellFactory<>());
-        above50Day.setCellValueFactory(new PropertyValueFactory<>("above50Day"));
-        above50Day.setCellFactory(new ColorCodedTableCellFactory<>());
+        valueDelta.setCellValueFactory(new PropertyValueFactory<>("valueChange"));
+        valueDelta.setCellFactory(new ColorCodedTableCellFactory<>());
         above200Day.setCellValueFactory(new PropertyValueFactory<>("above200Day"));
         above200Day. setCellFactory(new ColorCodedTableCellFactory<>());
         currentValue.setCellValueFactory(new PropertyValueFactory<>("currentValue"));

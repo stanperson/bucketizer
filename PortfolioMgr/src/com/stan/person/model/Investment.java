@@ -21,7 +21,7 @@ public class Investment {
      private Double bucket2Pct = 0.;
      private Double bucket3Pct = 0.;
      private Double changeFromBaseline = 0.0;
-     private Double above50Day = 0.0;
+     private Double valueChange = 0.0;
      private Double above200Day = 0.0;
 
 
@@ -191,12 +191,15 @@ public class Investment {
         this.changeFromBaseline = todayChange;
     }
 
-    public Double getAbove50Day() {
-        return above50Day;
+    public Double getValueChange() {
+    	if (this.quotePrice > 0.0) {
+    		return setPrecision(this.numberOfShares * this.quotePrice - this.currentValue,2);
+    	} else 
+    		return 0.0;
     }
 
-    public void setAbove50Day(Double above50Day) {
-        this.above50Day = above50Day;
+    private void setValueChange(Double valueChange) {
+        this.valueChange = valueChange;
     }
 
     public Double getAbove200Day() {

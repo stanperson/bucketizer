@@ -90,7 +90,7 @@ public class PortfolioPersistance {
 			int rsCntr = 0;
 			while (rs.next()) {
 				if (rsCntr++ == 0) {
-					dd = (Date)rs.getDate("activityDate");
+					dd = new Date(rs.getTimestamp("activityDate").getTime());
 					pc = rs.getDouble("pendingCash");
 				}
 				Investment inv = new Investment(rs.getString("ticker"),

@@ -1,4 +1,5 @@
 package com.stan.person.model;
+import static com.stan.person.utility.Math.setPrecision;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -60,8 +61,8 @@ public class QuoteReader {
             		} else {
             			inv.setChangeFromBaseline(0.0);
             		}
-            		inv.setAbove50Day( quote.getChange50().setScale(2,RoundingMode.HALF_UP).doubleValue());
-            		inv.setAbove200Day(quote.getChange200().setScale(2,RoundingMode.HALF_UP).doubleValue());
+            		//Double vc = setPrecision(quote.getPrice().setScale(2,RoundingMode.HALF_UP).doubleValue() * inv.getNumberOfShares() - inv.getCurrentValue(), 2);
+           		//inv.setAbove200Day(quote.getChange200().setScale(2,RoundingMode.HALF_UP).doubleValue());
             	} else {
             		String description = inv.getDescription();
             		if (!description.endsWith("*"))
