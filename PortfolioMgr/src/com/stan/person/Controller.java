@@ -4,6 +4,7 @@ import com.stan.person.configuration.ConfigProperties;
 import com.stan.person.database.DBConnection.QueryStatus;
 import com.stan.person.model.*;
 import com.stan.person.view.ColorCodedTableCellFactory;
+import com.stan.person.view.ZeroSuppressedTableCellFactory;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,6 +37,8 @@ public class Controller implements Initializable {
     @FXML
     private TextField pendingCash;
     @FXML
+    private TextField quoteDate;
+    @FXML
     private TableView<Investment> portfolioTableView;
     @FXML
     private TableColumn<Investment, String> ticker ;
@@ -45,6 +48,8 @@ public class Controller implements Initializable {
     private TableColumn<Investment, String> type;
     @FXML
     private TableColumn<Investment,Double> quotePrice;
+    @FXML
+    private TableColumn<Investment,Double> dayChange;
     @FXML
     private TableColumn<Investment, Double> numberOfShares;
     @FXML
@@ -66,7 +71,7 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<Investment, Double> valueDelta	;
     @FXML
-    private TableColumn<Investment, Double> above200Day;
+    private TableColumn<Investment, String> blankColumn;
     @FXML
     private TextField portfolioValue;
     @FXML
@@ -122,23 +127,24 @@ public class Controller implements Initializable {
         ticker.setCellValueFactory(new PropertyValueFactory<>("ticker"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
         quotePrice.setCellValueFactory(new PropertyValueFactory<>("quotePrice"));
-        quotePrice.setCellFactory(new ColorCodedTableCellFactory<>());
+        quotePrice.setCellFactory(new ZeroSuppressedTableCellFactory<>());
+        dayChange.setCellValueFactory(new PropertyValueFactory<>("dayChange"));
+        dayChange.setCellFactory(new ColorCodedTableCellFactory<>());
         type.setCellValueFactory(new PropertyValueFactory<>("type"));
         numberOfShares.setCellValueFactory(new PropertyValueFactory<>("numberOfShares"));
         currentPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
         //currentPrice.setCellFactory(new ColorCodedTableCellFactory<>());
         valueDelta.setCellValueFactory(new PropertyValueFactory<>("valueChange"));
         valueDelta.setCellFactory(new ColorCodedTableCellFactory<>());
-        above200Day.setCellValueFactory(new PropertyValueFactory<>("above200Day"));
-        above200Day. setCellFactory(new ColorCodedTableCellFactory<>());
+        blankColumn.setCellValueFactory(new PropertyValueFactory<>("blankColumn"));
         currentValue.setCellValueFactory(new PropertyValueFactory<>("currentValue"));
         costBasis.setCellValueFactory(new PropertyValueFactory<>("costBasis"));
         gainWithPct.setCellValueFactory(new PropertyValueFactory<>("gainPct"));
         gainWithPct.setCellFactory(new ColorCodedTableCellFactory<>());
         targetPct.setCellValueFactory(new PropertyValueFactory<>("targetPct"));
         actualPct.setCellValueFactory(new PropertyValueFactory<>("actualPct"));
-        changeFromBaseline.setCellValueFactory(new PropertyValueFactory<>("changeFromBaseline"));
-        changeFromBaseline.setCellFactory(new ColorCodedTableCellFactory<>());
+        //changeFromBaseline.setCellValueFactory(new PropertyValueFactory<>("changeFromBaseline"));
+        //changeFromBaseline.setCellFactory(new ColorCodedTableCellFactory<>());
         portfolioTableView.setOnMouseClicked((MouseEvent event) -> {
             if (event.getClickCount() > 1) {
                 tableRowSelected();
@@ -150,9 +156,10 @@ public class Controller implements Initializable {
     @FXML
     private void refresh() {
         ObservableList<Investment> invAsList = FXCollections.observableArrayList();
-              
+
         invAsList.addAll(portfolio.getInvestments());
         dataSource.setText(portfolio.getDataSource());
+        pendingCash.setText(portfolio.getPendingCash().toString());
         portfolioTableView.getItems().clear();
         portfolioTableView.setItems(invAsList);
         portfolioValue.setText( setPrecision( portfolio.getTotalValue(),2).toString());
@@ -176,6 +183,7 @@ public class Controller implements Initializable {
         QuoteReader quoteReader = new QuoteReader(portfolio);
         quoteArea.clear();
         quoteArea.setText(quoteReader.getQuotesAsText());
+        quoteDate.setText(quoteReader.getQuoteDate().toString());;
         refresh();
     }
 
@@ -197,20 +205,15 @@ public class Controller implements Initializable {
             QueryStatus qs = portfolio.setInvestmentActivity( reader.readInvestments(openName.getPath()), reader.getDateDownloaded(), reader.getPendingActivity());
             switch(qs) {
             case OK:
-
-            	pendingCash.setText(reader.getPendingActivity().toString());
-            	refresh();
-            	break;
             case DUPLICATE:
-
-            	pendingCash.setText(portfolio.getPendingCash().toString());
             	refresh();
             	break;
             default:
             	dataSource.setText("UNKNOWN QS:" + qs);
             	break;
             }
-
+            quoteArea.clear();
+            quoteDate.clear();
         }
     }
     @FXML

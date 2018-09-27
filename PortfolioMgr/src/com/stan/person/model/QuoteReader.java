@@ -18,7 +18,7 @@ public class QuoteReader {
     private List<Quote> quotes;
     private String[] symbols;
     private Portfolio portfolio;
-
+    private Date now;
     public QuoteReader(Portfolio portfolio) {
         this.portfolio = portfolio;
 
@@ -36,8 +36,12 @@ public class QuoteReader {
 
     }
 
+    public Date getQuoteDate() {
+    	return now;
+    }
+
     public String getQuotesAsText() {
-        Date now = new Date();
+        now = new Date();
 
         String quoteText = "Major Indices at: " + now +  "\n";
         ObservableList<Quote> observableList = getQuotesAsObservableList();
@@ -61,6 +65,7 @@ public class QuoteReader {
             		} else {
             			inv.setChangeFromBaseline(0.0);
             		}
+            		inv.setDayChange(quote.getChange().setScale(2,RoundingMode.HALF_UP).doubleValue());
             		//Double vc = setPrecision(quote.getPrice().setScale(2,RoundingMode.HALF_UP).doubleValue() * inv.getNumberOfShares() - inv.getCurrentValue(), 2);
            		//inv.setAbove200Day(quote.getChange200().setScale(2,RoundingMode.HALF_UP).doubleValue());
             	} else {

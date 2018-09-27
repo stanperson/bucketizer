@@ -9,6 +9,7 @@ public class Investment {
      private String ticker ="default";
      private String description="default";
      private Double quotePrice = 0.0;
+     private Double dayChange = 0.0;
      private Double numberOfShares = 0.;
      private Double currentPrice = 0.;
      private Double currentValue = 0.;
@@ -49,7 +50,12 @@ public class Investment {
          return this;
      }
 
-
+     public Double getDayChange() {
+    	 return setPrecision(dayChange,3);
+     }
+     public void setDayChange(Double dc) {
+    	 this.dayChange = dc;
+     }
 
      public Double getGain() {
          return setPrecision(gain,3);
@@ -193,8 +199,8 @@ public class Investment {
 
     public Double getValueChange() {
     	if (this.quotePrice > 0.0) {
-    		return setPrecision(this.numberOfShares * this.quotePrice - this.currentValue,2);
-    	} else 
+    		return setPrecision(this.numberOfShares * this.quotePrice - this.costBasis,2);
+    	} else
     		return 0.0;
     }
 
@@ -202,8 +208,8 @@ public class Investment {
         this.valueChange = valueChange;
     }
 
-    public Double getAbove200Day() {
-        return above200Day;
+    public String getBlankColumn() {
+        return " ";
     }
 
     public void setAbove200Day(Double above200Day) {

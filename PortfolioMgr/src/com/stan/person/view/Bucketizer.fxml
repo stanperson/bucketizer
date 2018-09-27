@@ -56,12 +56,32 @@
                     <children>
                         <HBox minWidth="-Infinity" prefHeight="27.0">
                             <children>
-                                <Label maxWidth="-Infinity" minWidth="-Infinity" style="-fx-background-color: gray; -fx-background-radius: 2; -fx-pref-width: 140;" text="Activity Date:" textFill="#f8f7f7">
+                                <Label style="-fx-background-color: gray; -fx-background-radius: 2; -fx-pref-width: 140;" text="Current Quote Date/Time" textFill="WHITE">
+                                    <padding>
+                                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                    </padding>
+                                    <HBox.margin>
+                                        <Insets left="48.0" />
+                                    </HBox.margin>
+                                </Label>
+                        <TextField fx:id="quoteDate" layoutX="849.0" layoutY="10.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="406.0" style="-fx-border-color: gray;">
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                           <font>
+                              <Font name="Menlo Regular" size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="8.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <Region prefHeight="26.0" prefWidth="12.0" style="-fx-background-color: burlywood;" HBox.hgrow="ALWAYS" />
+                                <Label maxWidth="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="120.0" style="-fx-background-color: gray; -fx-background-radius: 2; -fx-pref-width: 140;" text="As Of" textFill="#f8f7f7">
                                     <padding>
                                         <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                     </padding>
                                 </Label>
-                                <TextField fx:id="dataSource" minWidth="-Infinity" prefHeight="26.0" prefWidth="473.0" style="-fx-border-color: gray;">
+                                <TextField fx:id="dataSource" minWidth="-Infinity" prefHeight="26.0" prefWidth="242.0" style="-fx-border-color: gray;">
                                     <HBox.margin>
                                         <Insets left="12.0" />
                                     </HBox.margin>
@@ -72,23 +92,6 @@
                               <Font name="Menlo Regular" size="11.0" />
                            </font>
                                 </TextField>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button fx:id="openActivityFile" minWidth="-Infinity" mnemonicParsing="false" onAction="#openActivityFileClicked" prefHeight="26.0" prefWidth="57.0" text="Open" />
-                            </children>
-                            <padding>
-                                <Insets left="4.0" />
-                            </padding>
-                        </HBox>
-                        <HBox maxWidth="-Infinity" prefHeight="24.0" prefWidth="1215.0">
-                            <children>
-                                <Label style="-fx-background-color: gray; -fx-background-radius: 2; -fx-pref-width: 140;" text="Outstanding Cash:    " textFill="WHITE">
-                                    <padding>
-                                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                    </padding>
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                </Label>
                                 <TextField fx:id="pendingCash" onAction="#refresh" prefHeight="27.0" prefWidth="74.0" text="0.00">
                                     <HBox.margin>
                                         <Insets left="12.0" />
@@ -100,7 +103,16 @@
                               <Font name="Menlo Regular" size="12.0" />
                            </font>
                                 </TextField>
+                        <Button fx:id="openActivityFile" minWidth="-Infinity" mnemonicParsing="false" onAction="#openActivityFileClicked" prefHeight="26.0" prefWidth="57.0" text="Open">
+                           <HBox.margin>
+                              <Insets left="8.0" />
+                           </HBox.margin></Button>
                             </children>
+                            <padding>
+                                <Insets left="4.0" />
+                            </padding>
+                        </HBox>
+                        <HBox maxWidth="-Infinity" prefHeight="24.0" prefWidth="1215.0">
                             <VBox.margin>
                                 <Insets />
                             </VBox.margin>
@@ -113,9 +125,9 @@
                                 <TableColumn fx:id="ticker" prefWidth="75.0" text="Ticker" />
                                 <TableColumn fx:id="description" maxWidth="500.0" minWidth="75.0" prefWidth="300.0" text="Description" />
                         <TableColumn fx:id="quotePrice" prefWidth="75.0" text="Quote" />
-                        <TableColumn fx:id="changeFromBaseline" prefWidth="75.0" text="PirceChange" />
-                        <TableColumn fx:id="valueDelta" prefWidth="75.0" text="ValueChange" />
-                        <TableColumn fx:id="above200Day" prefWidth="75.0" />
+                        <TableColumn fx:id="dayChange" prefWidth="75.0" text="Change Today" />
+                        <TableColumn fx:id="valueDelta" prefWidth="75.0" text="Gain Now" />
+                        <TableColumn fx:id="blankColumn" editable="false" maxWidth="10.0" prefWidth="10.0" style="fx-background-color: burlywood;" text=" " />
                         <TableColumn fx:id="gainWithPct" prefWidth="125.0" text="Gain (%)" />
                                 <TableColumn fx:id="currentPrice" prefWidth="75.0" text="Price/Share" />
                                 <TableColumn fx:id="numberOfShares" prefWidth="75.0" text="Shares" />

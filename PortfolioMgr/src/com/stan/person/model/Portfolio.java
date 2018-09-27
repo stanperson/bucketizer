@@ -27,6 +27,7 @@ public class Portfolio {
     	// find newest portfolio activity in DB.
 
     	PortfolioPersistance.portfolioReader(DBCommand.NEWEST, this); // find the newest portfolio activity collection in DB
+    	System.out.println("Pending Cash: " + pendingCash);
     }
   private void addInvestment(Investment investment) {
         String ticker = investment.getTicker();
